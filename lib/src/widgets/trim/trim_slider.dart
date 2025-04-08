@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -368,16 +369,16 @@ class _TrimSliderState extends State<TrimSlider>
         }
         break;
       case _TrimBoundaries.progress:
-        final pos = details.localPosition.dx;
-        // postion of pos on the layout width between 0 and 1
-        final localRatio = pos / (_trimLayout.width + _horizontalMargin * 2);
-        // because the video progress cursor is on a different layout context (horizontal margin are not applied)
-        // the gesture offset must be adjusted (remove margin when localRatio < 0.5 and add margin when localRatio > 0.5)
-        final localAdjust = (localRatio - 0.5) * (_horizontalMargin * 2);
-        _controllerSeekTo((pos + localAdjust).clamp(
-          _rect.left - _horizontalMargin,
-          _rect.right + _horizontalMargin,
-        ));
+        // final pos = details.localPosition.dx;
+        // // postion of pos on the layout width between 0 and 1
+        // final localRatio = pos / (_trimLayout.width + _horizontalMargin * 2);
+        // // because the video progress cursor is on a different layout context (horizontal margin are not applied)
+        // // the gesture offset must be adjusted (remove margin when localRatio < 0.5 and add margin when localRatio > 0.5)
+        // final localAdjust = (localRatio - 0.5) * (_horizontalMargin * 2);
+        // _controllerSeekTo((pos + localAdjust).clamp(
+        //   _rect.left - _horizontalMargin,
+        //   _rect.right + _horizontalMargin,
+        // ));
         break;
       default:
         break;
@@ -489,9 +490,17 @@ class _TrimSliderState extends State<TrimSlider>
     if (value && widget.controller.isPlaying) {
       _isVideoPlayerHold = true;
       widget.controller.video.pause();
+      
     } else if (_isVideoPlayerHold) {
       _isVideoPlayerHold = false;
-      widget.controller.video.play();
+
+      // 定时执行   widget.controller.video.play();
+      Timer.periodic(const Duration(milliseconds: 17), (timer) {
+        widget.controller.video.play();
+      });
+
+        // widget.controller.video.play();
+
     }
 
     if (_boundary != _TrimBoundaries.progress) {
